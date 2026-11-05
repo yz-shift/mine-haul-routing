@@ -2,7 +2,7 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
-## 2026-11-05 23:55 · T-010 · 完成
+## 2026-11-05 23:52 · T-010 · 完成
 - 做了：经我同意把本地 18 个提交 push 到私有仓库 yz-shift/mine-haul-routing，第一次运行 Actions
 - 改了：TASKS.md、PROGRESS.md
 - 验证：Actions 运行 42030585856（提交 01d8a8b）结论 success，安装工具、编译、`make test`、`make valgrind` 每一步都通过
