@@ -1,0 +1,11 @@
+# Small network for the file-loading test.
+
+# N id name x_m y_m elevation_m
+N 0 PIT_A 120.0 40.0 -85
+N 1 CRUSHER 300.0 210.0 12
+N 2 WASTE_DUMP 500 210 30   # comment after a record
+
+# E from to length_m speed_limit_kmh one_way closed
+E 0 1 450 40 0 0
+E 1 2 200 60 1 0
+E 0 2 700 30 0 1

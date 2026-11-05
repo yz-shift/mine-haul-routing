@@ -14,6 +14,7 @@
 #define TEST_FRAMEWORK_H
 
 #include <stdio.h>
+#include <string.h>
 
 static int tf_tests_run = 0;
 static int tf_tests_failed = 0;
@@ -65,6 +66,33 @@ static inline int tf_summary(void)
         if (tf_expected != tf_actual) {                                      \
             tf_mark_failed(__FILE__, __LINE__);                              \
             printf("expected %lld, got %lld\n", tf_expected, tf_actual);     \
+            return;                                                          \
+        }                                                                    \
+    } while (0)
+
+#define ASSERT_NEAR(expected, actual, tolerance)                             \
+    do {                                                                     \
+        double tf_expected = (expected);                                     \
+        double tf_actual = (actual);                                         \
+        double tf_diff = tf_expected - tf_actual;                            \
+        if (tf_diff < 0) {                                                   \
+            tf_diff = -tf_diff;                                              \
+        }                                                                    \
+        /* Written so that a NaN, which fails every comparison, also fails. */ \
+        if (!(tf_diff <= (tolerance))) {                                     \
+            tf_mark_failed(__FILE__, __LINE__);                              \
+            printf("expected %g, got %g\n", tf_expected, tf_actual);         \
+            return;                                                          \
+        }                                                                    \
+    } while (0)
+
+#define ASSERT_EQ_STR(expected, actual)                                      \
+    do {                                                                     \
+        const char *tf_expected = (expected);                                \
+        const char *tf_actual = (actual);                                    \
+        if (strcmp(tf_expected, tf_actual) != 0) {                           \
+            tf_mark_failed(__FILE__, __LINE__);                              \
+            printf("expected \"%s\", got \"%s\"\n", tf_expected, tf_actual); \
             return;                                                          \
         }                                                                    \
     } while (0)

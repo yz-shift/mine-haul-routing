@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 20:55 · T-003 · 完成
+- 做了：实现邻接表图结构（每个节点一个动态数组）和道路网文件解析，错误信息带文件名和行号；经我同意填了 AGENTS.md 第 2 节（单独提交）
+- 改了：include/graph.h、src/graph.c、include/road_file.h、src/road_file.c、tests/test_graph.c、tests/test_road_file.c、tests/data/small_mine.road、tests/test_framework.h、Makefile、AGENTS.md、TASKS.md、PROGRESS.md
+- 验证：`make test` 退出码 0，27 个测试全过（图 10、解析 15、冒烟 2），覆盖正常文件、注释、格式错误；`make valgrind` 退出码 0，3 个程序都是 0 错误、堆内存全部释放。一次性检查（脚本不进仓库）：ASan + UBSan 通过；`-O2` 无警告；把 30 个内存分配点逐个模拟失败，都返回 NULL 和 out of memory，valgrind 干净；故意改坏代码 10 处，测试都能发现
+- 问题：自查发现 `graph_add_road` 收到双向自环（from 等于 to）时，只预留一个位置却写入两条弧，可能堆溢出。解析器本来就拒绝自环，所以读文件碰不到这条路径，但 API 不安全。已修复并加测试。节点名重复和平行路段的处理留到 T-008，已写进"待定"
+- 下一步：T-004 二叉堆（支持 decrease-key）
+
 ## 2026-11-05 20:43 · T-002 · 完成
 - 做了：在 WSL2 Ubuntu 里跑通工具链（Ubuntu 26.04、gcc 15.2.0、GNU Make 4.4.1、valgrind 3.26.0，由我安装）；写了 Makefile（all、test、valgrind、clean）、极简断言头文件和冒烟测试；用 `.gitattributes` 固定 LF 换行
 - 改了：Makefile、tests/test_framework.h、tests/test_smoke.c、.gitattributes、.gitignore、TASKS.md、PROGRESS.md

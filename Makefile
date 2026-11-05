@@ -2,6 +2,7 @@ CC       := gcc
 CFLAGS   := -std=c11 -Wall -Wextra -Werror -pedantic -g -Iinclude
 # Generate .d files so that editing a header rebuilds whatever includes it.
 DEPFLAGS := -MMD -MP
+LDLIBS   := -lm
 
 BUILD    := build
 
@@ -31,7 +32,7 @@ valgrind: $(TEST_BINS)
 	@set -e; for t in $(TEST_BINS); do echo "== $$t"; $(VALGRIND) "./$$t"; done
 
 $(BUILD)/tests/%: $(BUILD)/tests/%.o $(LIB_OBJS)
-	$(CC) $^ -o $@
+	$(CC) $^ -o $@ $(LDLIBS)
 
 $(BUILD)/%.o: %.c
 	@mkdir -p $(dir $@)
