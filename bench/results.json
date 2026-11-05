@@ -1,0 +1,14 @@
+{"passes":5,"maps":[
+{"nodes":10000,"arcs":37605,"pairs":200,"loads":[
+{"load":"empty","top_speed_kmh":60.00,"results":[{"algorithm":"dijkstra","total_ms":205.398,"mean_ms":1.0270,"mean_expanded":4780.2,"found":200},{"algorithm":"astar","total_ms":141.007,"mean_ms":0.7050,"mean_expanded":2883.2,"found":200}]},
+{"load":"full","top_speed_kmh":56.32,"results":[{"algorithm":"dijkstra","total_ms":122.481,"mean_ms":0.6124,"mean_expanded":4752.9,"found":200},{"algorithm":"astar","total_ms":100.902,"mean_ms":0.5045,"mean_expanded":3478.3,"found":200}]}
+]},
+{"nodes":40000,"arcs":151235,"pairs":200,"loads":[
+{"load":"empty","top_speed_kmh":60.00,"results":[{"algorithm":"dijkstra","total_ms":761.037,"mean_ms":3.8052,"mean_expanded":21823.8,"found":200},{"algorithm":"astar","total_ms":563.340,"mean_ms":2.8167,"mean_expanded":13632.5,"found":200}]},
+{"load":"full","top_speed_kmh":56.34,"results":[{"algorithm":"dijkstra","total_ms":887.659,"mean_ms":4.4383,"mean_expanded":21898.6,"found":200},{"algorithm":"astar","total_ms":693.312,"mean_ms":3.4666,"mean_expanded":16435.1,"found":200}]}
+]},
+{"nodes":90000,"arcs":341087,"pairs":200,"loads":[
+{"load":"empty","top_speed_kmh":60.00,"results":[{"algorithm":"dijkstra","total_ms":2331.579,"mean_ms":11.6579,"mean_expanded":45484.8,"found":200},{"algorithm":"astar","total_ms":1282.005,"mean_ms":6.4100,"mean_expanded":27242.2,"found":200}]},
+{"load":"full","top_speed_kmh":56.34,"results":[{"algorithm":"dijkstra","total_ms":2373.803,"mean_ms":11.8690,"mean_expanded":45406.8,"found":200},{"algorithm":"astar","total_ms":1447.072,"mean_ms":7.2354,"mean_expanded":32894.1,"found":200}]}
+]}
+]}

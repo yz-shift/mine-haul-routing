@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 22:03 · T-009 · 卡住
+- 做了：写了大图生成器、测速程序、制表脚本和出图脚本；`make bench` 生成 1 万、4 万、9 万节点的网格图，每种规模和载重跑 200 对随机起终点，共 5 轮取中位数，全程核对两种算法的代价一致
+- 改了：bench/gen_road.c、bench/bench_routing.c、bench/results.json、viz/bench_table.py、viz/plot_route.py、viz/requirements.txt、Makefile、.gitignore、TASKS.md、PROGRESS.md
+- 验证：9 万节点上，空载每次查询 Dijkstra 11.66 ms、A* 6.41 ms（快 45%），展开节点数少 40%；满载 11.87 ms、7.24 ms（快 39%），展开节点数少 28%。`make test`、`make valgrind` 退出码 0；测速程序在小图上跑 valgrind 退出码 0；生成器同样的种子输出相同。验证了 `make valgrind` 能发现命令行工具的泄漏。**未验证：出图。** 本机没有 matplotlib，脚本只检查了语法、数据处理和缺依赖时的报错，还没有真正画出图，也没有看过布局
+- 问题：1 万节点的结果波动明显：同样的展开量，空载 1.03 ms、满载 0.61 ms，这个规模的差异不要过度解读。数据来自一台开发笔记本的单次运行，不是严格基准。配色用的是 dataviz 文档中已校验的前两个颜色，校验脚本在这里运行时没有输出，所以没有独立复核
+- 下一步：等我同意安装 matplotlib 后出图并检查；先做 T-010、T-011
+
 ## 2026-11-05 21:53 · T-008 · 完成
 - 做了：实现封路、按名字找节点、JSON 输出和命令行工具 `mine-route`；手工设计了 24 个节点的示例矿区；AGENTS.md 按之前确认的内容填上入口文件和运行命令
 - 改了：include/graph.h、src/graph.c、include/json_out.h、src/json_out.c、src/main.c、data/sample_mine.road、tests/cli_test.sh、tests/test_json_out.c、tests/test_graph.c、tests/test_routing.c、Makefile、AGENTS.md、TASKS.md、PROGRESS.md

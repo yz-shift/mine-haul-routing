@@ -1,5 +1,9 @@
 # Build output
 build/
 
+# Python
+.venv/
+__pycache__/
+
 # Local secrets and settings
 .env
