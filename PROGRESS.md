@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 23:55 · T-010 · 完成
+- 做了：经我同意把本地 18 个提交 push 到私有仓库 yz-shift/mine-haul-routing，第一次运行 Actions
+- 改了：TASKS.md、PROGRESS.md
+- 验证：Actions 运行 42030585856（提交 01d8a8b）结论 success，安装工具、编译、`make test`、`make valgrind` 每一步都通过
+- 问题：Actions 有两条提示，都没有让运行失败：checkout@v4 使用的 Node.js 20 已弃用（已写进"待定"）；ubuntu-latest 正在迁移到 Ubuntu 26。上一条 T-011 日志里 Windows 路径多打了一个反斜杠，日志规定不改旧记录，正确写法是 `.venv\Scripts`
+- 下一步：全部任务完成，我开新会话做 T-999 面试演练
+
 ## 2026-11-05 23:49 · T-011 · 完成
 - 做了：两张图生成后，README 的图片链接可以打开了，对照图片确认了开头两段关于满载、空载和封路路线的说法
 - 改了：TASKS.md、PROGRESS.md（README.md 本身不用改）

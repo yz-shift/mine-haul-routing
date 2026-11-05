@@ -14,12 +14,12 @@
 
 ## 卡住
 
-- [!] T-010 GitHub Actions：每次 push 自动编译、测试、跑 valgrind
-  - 验收：Actions 绿色
-  - 卡在：工作流已写好，干净克隆里跑同样的命令全部通过；但 Actions 只有 push 后才会运行，git push 要我先同意
+（空）
 
 ## 已完成
 
+- [x] T-010 GitHub Actions：每次 push 自动编译、测试、跑 valgrind — 2026-11-05
+  - 验收：Actions 绿色
 - [x] T-011 README：简介、地图截图、设计取舍、复杂度、测速结果、局限 — 2026-11-05
   - 验收：README 齐全
 - [x] T-009 Python 可视化 + 测速对比 — 2026-11-05
@@ -46,6 +46,7 @@
 
 > AI 工作中发现的新问题写在这里，我确认后再挪进"待做"。
 
+- Actions 提示 actions/checkout@v4 用的 Node.js 20 已弃用（目前被强制跑在 Node.js 24 上，运行成功），可以换成新版本
 - viz/plot_route.py 输入文件不存在时直接打印 Python traceback，可以改成一行错误提示
 
 ## 收尾（所有任务完成后，开新会话做）
