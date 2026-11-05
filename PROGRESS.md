@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 23:49 · T-011 · 完成
+- 做了：两张图生成后，README 的图片链接可以打开了，对照图片确认了开头两段关于满载、空载和封路路线的说法
+- 改了：TASKS.md、PROGRESS.md（README.md 本身不用改）
+- 验证：README 引用的 docs/route_load_comparison.png、docs/route_closure.png 都已存在并提交，文件名和 README 一致；AGENTS 第 4 节要求的简介、截图、技术栈、运行方法、设计取舍、已知局限都有
+- 问题：README 的 `.venv/bin` 命令是 Linux 写法，这次出图是在 Windows 上用 `.venv\Scripts` 跑的，Linux 写法没有实际跑过
+- 下一步：git push，看 Actions 结果（T-010）
+
 ## 2026-11-05 23:49 · T-009 · 完成
 - 做了：经我同意在 .venv 装了 matplotlib 3.11.2，第一次真正出图。看图后修了两个问题：海拔最高的节点接近白色，在背景上看不见，改成到不了白色的灰度；标签盖住道路，改成每个标签从 8 个候选位置里选压到道路、路线、节点和其他标签最少的
 - 改了：viz/plot_route.py、docs/route_load_comparison.png、docs/route_closure.png、TASKS.md、PROGRESS.md
