@@ -11,9 +11,6 @@
 
 > 2026-11-02 确认：开发环境用 WSL2 + Ubuntu（我自己装）；测试框架自己写极简断言头文件；手工设计小矿区，另生成大图测速。排在项目 3 之后。
 
-- [ ] T-002 开发环境 + 骨架：WSL 里装 gcc/make/valgrind；Makefile；测试框架
-  - 验收：`make test` 跑通一个空测试；`make valgrind` 0 错误
-  - 备注：需确认。要我先装好 WSL2 + Ubuntu（`wsl --install`，需要管理员权限和重启）
 - [ ] T-003 道路网文件解析 + 图结构（邻接表）
   - 验收：测试覆盖正常文件、注释、格式错误；valgrind 干净
 - [ ] T-004 二叉堆（支持 decrease-key）
@@ -35,7 +32,10 @@
 
 ## 卡住
 
-（空）
+- [!] T-002 开发环境 + 骨架：WSL 里装 gcc/make/valgrind；Makefile；测试框架
+  - 验收：`make test` 跑通一个空测试；`make valgrind` 0 错误
+  - 备注：需确认。要我先装好 WSL2 + Ubuntu（`wsl --install`，需要管理员权限和重启）
+  - 卡在：2026-11-05 检查，WSL 还没装（`wsl --status` 提示未安装），本机也没有 gcc、make、valgrind。等我在管理员终端运行 `wsl --install` 并重启后继续
 
 ## 已完成
 
