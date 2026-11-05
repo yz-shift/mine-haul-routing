@@ -13,9 +13,11 @@
 
 | 用途 | 命令 |
 |---|---|
-| 安装依赖 | （填） |
-| 运行 | （填） |
-| 测试 | （填） |
+| 安装依赖 | `sudo apt install build-essential valgrind` |
+| 运行 | 暂无，T-008 写完命令行工具后再填 |
+| 测试 | `make test`、`make valgrind` |
+
+所有 `make` 命令都在 WSL Ubuntu 的项目目录 `/mnt/d/projects/mine-haul-routing` 里运行。
 
 表里没填的命令不要猜，先问我。
 
