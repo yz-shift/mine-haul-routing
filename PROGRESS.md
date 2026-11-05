@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 21:24 · T-004 · 完成
+- 做了：实现带位置表的二叉最小堆，支持 insert、pop_min、decrease_key、contains，内存在创建时一次分配好
+- 改了：include/heap.h、src/heap.c、tests/test_heap.c、TASKS.md、PROGRESS.md
+- 验证：`make test` 退出码 0，41 个测试全过（新增堆测试 14 个，含最多 20000 个随机键的排序对照和 20000 步随机操作对照）；`make valgrind` 退出码 0，4 个程序都是 0 错误、堆内存全部释放。一次性检查（脚本不进仓库）：ASan + UBSan 通过；`-O2` 无警告；3 个内存分配点逐个模拟失败，都返回 NULL，valgrind 干净；故意改坏代码 11 处，测试都能发现。这几项跑完后只改过一条注释，随后重跑了 `make test` 和 `make valgrind`
+- 问题：没有实测 decrease-key 和“重复入堆、取出时跳过”两种做法谁更快，目前只能讲理论差别
+- 下一步：T-005 代价模型（坡度、载重、限速、单行、封闭）
+
 ## 2026-11-05 20:55 · T-003 · 完成
 - 做了：实现邻接表图结构（每个节点一个动态数组）和道路网文件解析，错误信息带文件名和行号；经我同意填了 AGENTS.md 第 2 节（单独提交）
 - 改了：include/graph.h、src/graph.c、include/road_file.h、src/road_file.c、tests/test_graph.c、tests/test_road_file.c、tests/data/small_mine.road、tests/test_framework.h、Makefile、AGENTS.md、TASKS.md、PROGRESS.md
