@@ -151,9 +151,10 @@ Ubuntu 26.04 with gcc 15.2. Treat the times as a rough guide: the 10,000-node ro
 differ by more than their expansion counts explain, so they include noise. The
 expansion counts come from the search itself and do not vary with the machine.
 
-A\* saves less for a loaded truck because its heuristic is further from reality:
-a loaded truck reaches 56 km/h on a gentle descent but is far slower on most roads,
-so straight-line distance over top speed underestimates the remaining time by more.
+A\* saves less for a loaded truck, probably because its heuristic is further from
+reality: a loaded truck reaches 56 km/h on a gentle descent but is far slower on most
+roads, so straight-line distance over top speed underestimates the remaining time by
+more. I inferred this from the results and did not test it separately.
 
 ## Testing
 
@@ -169,7 +170,7 @@ so straight-line distance over top speed underestimates the remaining time by mo
 ## Known limitations
 
 - **No real mine data.** The sample mine is designed by hand, and the speed tests use
-  generated grids, whose shape favours neither algorithm in particular.
+  generated grids, so the savings may differ on a real road network.
 - **The physics is simplified.** Speed is constant along a road: there is no
   acceleration, gear curve, traffic, queueing at the crusher, or turning cost.
 - **One truck at a time.** Trucks do not interact.
