@@ -1,0 +1,5 @@
+# Build output
+build/
+
+# Local secrets and settings
+.env

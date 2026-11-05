@@ -32,13 +32,13 @@
 
 ## 卡住
 
-- [!] T-002 开发环境 + 骨架：WSL 里装 gcc/make/valgrind；Makefile；测试框架
-  - 验收：`make test` 跑通一个空测试；`make valgrind` 0 错误
-  - 备注：需确认。要我先装好 WSL2 + Ubuntu（`wsl --install`，需要管理员权限和重启）
-  - 卡在：2026-11-05 检查，WSL 还没装（`wsl --status` 提示未安装），本机也没有 gcc、make、valgrind。等我在管理员终端运行 `wsl --install` 并重启后继续。2026-11-05 20:27 复查：仍未安装，电脑从 16:45 起没有重启过，且有待重启的更改。2026-11-05 20:35 复查：WSL 3.0.3 已装好且已重启，但还没有发行版，要我运行 `wsl --install -d Ubuntu` 并设置用户
+（空）
 
 ## 已完成
 
+- [x] T-002 开发环境 + 骨架：WSL 里装 gcc/make/valgrind；Makefile；测试框架 — 2026-11-05
+  - 验收：`make test` 跑通一个空测试；`make valgrind` 0 错误
+  - 备注：需确认。WSL2 + Ubuntu 和编译工具已由我装好（2026-11-05）
 - [x] T-001 出方案（需确认） — 2026-11-02
   - 验收：PLAN.md 已交付，我已确认，全部按推荐执行
 

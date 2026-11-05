@@ -1,0 +1,3 @@
+# Keep LF everywhere. The repo is edited from Windows but built in WSL, and a
+# CRLF Makefile or shell script breaks there. This overrides core.autocrlf=true.
+* text=auto eol=lf

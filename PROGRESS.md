@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 20:43 · T-002 · 完成
+- 做了：在 WSL2 Ubuntu 里跑通工具链（Ubuntu 26.04、gcc 15.2.0、GNU Make 4.4.1、valgrind 3.26.0，由我安装）；写了 Makefile（all、test、valgrind、clean）、极简断言头文件和冒烟测试；用 `.gitattributes` 固定 LF 换行
+- 改了：Makefile、tests/test_framework.h、tests/test_smoke.c、.gitattributes、.gitignore、TASKS.md、PROGRESS.md
+- 验证：在 Ubuntu 里 `make test` 退出码 0（2 run, 0 failed，含一个空测试）；`make valgrind` 退出码 0（0 errors，All heap blocks were freed）。改头文件会触发重新编译。用仓库外的临时副本做了 4 个反向检查，都按预期失败：断言失败时 `make test` 报错，且后面的测试继续跑；definitely lost 泄漏和 still reachable 内存都让 `make valgrind` 报错；未使用变量的警告让编译失败
+- 问题：AGENTS.md 第 2 节的常用命令还没填，改这个文件要先问我。make 只能在 WSL 里跑，Windows 这边没有 gcc 和 make
+- 下一步：等我确认 T-002 和是否填 AGENTS.md，说"继续"后做 T-003
+
 ## 2026-11-05 20:35 · T-002 · 卡住
 - 做了：我说能看到 Ubuntu，复查后发现 WSL 本体已装好，但这个 Windows 账户下没有发行版，所以没有领任务，也没有写代码
 - 改了：TASKS.md、PROGRESS.md
