@@ -19,6 +19,17 @@ TEXT_PRIMARY = "#0b0b0b"
 TEXT_SECONDARY = "#52514e"
 ROAD = "#c9c8c1"
 CLOSED_ROAD = "#0b0b0b"
+# Stops short of white, so the highest nodes still show against the surface.
+ELEVATION_RAMP = ["#0b0b0b", "#b0afa8"]
+# Places a node label may go, best first: x and y offset in points, and text alignment.
+LABEL_PLACES = [(8, 7, "left"), (8, -7, "left"), (-8, 7, "right"), (-8, -7, "right"),
+                (0, 12, "center"), (0, -12, "center"), (10, 0, "left"), (-10, 0, "right")]
+# How much each thing a label could cover counts against that place.
+ROAD_PENALTY = 1
+ROUTE_PENALTY = 3
+NODE_PENALTY = 3
+LABEL_PENALTY = 10
+LABEL_CLEARANCE_PX = 5
 
 
 def load_json(path):
@@ -73,12 +84,69 @@ def labelled_node_ids(routes):
     return sorted({node for route in routes for node in route["nodes"]})
 
 
+def label_penalty(box, road_paths, route_paths, node_points, placed_boxes):
+    """Scores a label position in display coordinates. Lower covers less of the map."""
+    roads = sum(path.intersects_bbox(box, filled=False) for path in road_paths)
+    routes = sum(path.intersects_bbox(box, filled=False) for path in route_paths)
+    marks = sum(box.contains(x, y) for x, y in node_points)
+    labels = sum(box.overlaps(other) for other in placed_boxes)
+    return (roads * ROAD_PENALTY + routes * ROUTE_PENALTY + marks * NODE_PENALTY
+            + labels * LABEL_PENALTY)
+
+
+def place_label(label, renderer, road_paths, route_paths, node_points, placed_boxes):
+    """Moves a label to its least obstructive place, keeping the earliest on a tie."""
+    best = None
+    for place in LABEL_PLACES:
+        label.xyann = place[:2]
+        label.set_horizontalalignment(place[2])
+        # Padded because the routes are wide: a label can touch one without crossing its centre.
+        box = label.get_window_extent(renderer).padded(LABEL_CLEARANCE_PX)
+        score = label_penalty(box, road_paths, route_paths, node_points, placed_boxes)
+        if best is None or score < best[0]:
+            best = (score, place, box)
+    label.xyann = best[1][:2]
+    label.set_horizontalalignment(best[1][2])
+    placed_boxes.append(best[2])
+
+
+def draw_node_labels(figure, axes, nodes, roads, routes):
+    """Labels the nodes that routes use, placing each clear of the map where it can."""
+    from matplotlib.path import Path
+
+    figure.canvas.draw()  # Settles the equal-aspect axes, which display positions depend on.
+    renderer = figure.canvas.get_renderer()
+
+    def to_display(point):
+        return axes.transData.transform(point)
+
+    def path_between(start, end):
+        return Path([to_display(start), to_display(end)])
+
+    road_paths = [path_between((nodes[start]["x_m"], nodes[start]["y_m"]),
+                               (nodes[end]["x_m"], nodes[end]["y_m"]))
+                  for start, end, _, _ in roads]
+    route_paths = [path_between(start, end) for route in routes
+                   for start, end in route_segments(route, nodes)]
+    node_points = [to_display((node["x_m"], node["y_m"])) for node in nodes]
+    placed_boxes = []
+    for node_id in labelled_node_ids(routes):
+        node = nodes[node_id]
+        label = axes.annotate(node["name"].replace("_", " "), (node["x_m"], node["y_m"]),
+                              xytext=LABEL_PLACES[0][:2], textcoords="offset points",
+                              fontsize=8, color=TEXT_PRIMARY, zorder=6, va="center",
+                              bbox={"facecolor": SURFACE, "edgecolor": "none", "alpha": 0.8,
+                                    "pad": 1})
+        place_label(label, renderer, road_paths, route_paths, node_points, placed_boxes)
+
+
 def draw(documents, title, output):
     """Draws and saves the figure. Imported here so the rest works without matplotlib."""
     import matplotlib
 
     matplotlib.use("Agg")
     import matplotlib.pyplot as plt
+    from matplotlib.colors import LinearSegmentedColormap
 
     nodes = documents[-1]["nodes"]
     routes = collect_routes(documents)
@@ -108,19 +176,13 @@ def draw(documents, title, output):
 
     elevations = [node["elevation_m"] for node in nodes]
     scatter = axes.scatter([node["x_m"] for node in nodes], [node["y_m"] for node in nodes],
-                           c=elevations, cmap="Greys_r", s=70, edgecolors=SURFACE,
-                           linewidths=2, zorder=5)
+                           c=elevations, s=70,
+                           cmap=LinearSegmentedColormap.from_list("elevation", ELEVATION_RAMP),
+                           edgecolors=SURFACE, linewidths=2, zorder=5)
     colour_bar = figure.colorbar(scatter, ax=axes, shrink=0.6, pad=0.02)
     colour_bar.set_label("Elevation (m)", color=TEXT_SECONDARY)
     colour_bar.outline.set_visible(False)
     colour_bar.ax.tick_params(colors=TEXT_SECONDARY, length=0)
-
-    for node_id in labelled_node_ids(routes):
-        node = nodes[node_id]
-        axes.annotate(node["name"].replace("_", " "), (node["x_m"], node["y_m"]),
-                      xytext=(8, 6), textcoords="offset points", fontsize=8,
-                      color=TEXT_PRIMARY, zorder=6,
-                      bbox={"facecolor": SURFACE, "edgecolor": "none", "alpha": 0.8, "pad": 1})
 
     axes.set_title(title, loc="left", fontsize=14, color=TEXT_PRIMARY, pad=14)
     axes.set_xlabel("x (m)", color=TEXT_SECONDARY)
@@ -131,6 +193,7 @@ def draw(documents, title, output):
         spine.set_visible(False)
     axes.legend(loc="upper center", bbox_to_anchor=(0.5, -0.07), frameon=False, ncol=1,
                 labelcolor=TEXT_PRIMARY)
+    draw_node_labels(figure, axes, nodes, unique_roads(documents[-1]["arcs"]), routes)
 
     figure.savefig(output, dpi=150, bbox_inches="tight", facecolor=SURFACE)
     plt.close(figure)
