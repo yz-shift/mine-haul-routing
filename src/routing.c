@@ -14,6 +14,8 @@ typedef struct {
     int *previous_node;
     int *previous_arc; /* Index into the previous node's arcs. */
     Heap *queue;
+    int destination;
+    double top_speed_mps; /* 0 or less turns the heuristic off. */
 } Search;
 
 static void search_free(Search *search)
@@ -45,9 +47,24 @@ static bool search_init(Search *search, int node_count)
     return true;
 }
 
+/* A lower bound on the seconds left from node to the destination. */
+static double remaining_seconds(const Graph *graph, const Search *search, int node)
+{
+    if (search->top_speed_mps <= 0) {
+        return 0;
+    }
+    const Node *here = &graph->nodes[node];
+    const Node *there = &graph->nodes[search->destination];
+    return hypot(there->x_m - here->x_m, there->y_m - here->y_m) /
+           search->top_speed_mps;
+}
+
 /*
  * Relaxes every open arc out of node: if going through node beats the best known
  * way to a neighbour, record it and queue the neighbour at its new priority.
+ * Priority is cost so far plus the heuristic, so with the heuristic off this is
+ * exactly Dijkstra. A settled node can be queued again if a cheaper way to it
+ * turns up, so no separate closed set is needed.
  * A closed arc costs INFINITY, which can never beat a best known cost.
  * The heap calls cannot fail: ids are valid, and a lower cost gives a lower key.
  */
@@ -64,10 +81,11 @@ static void expand_node(const Graph *graph, Load load, Search *search, int node_
         search->best_cost_s[arc->to] = new_cost_s;
         search->previous_node[arc->to] = node_id;
         search->previous_arc[arc->to] = i;
+        double priority = new_cost_s + remaining_seconds(graph, search, arc->to);
         if (heap_contains(search->queue, arc->to)) {
-            heap_decrease_key(search->queue, arc->to, new_cost_s);
+            heap_decrease_key(search->queue, arc->to, priority);
         } else {
-            heap_insert(search->queue, arc->to, new_cost_s);
+            heap_insert(search->queue, arc->to, priority);
         }
     }
 }
@@ -108,8 +126,8 @@ static void route_reset(Route *route)
     *route = (Route){.cost_s = INFINITY};
 }
 
-RouteStatus route_dijkstra(const Graph *graph, Load load, int from, int to,
-                           Route *route)
+static RouteStatus run_search(const Graph *graph, Load load, double top_speed_mps,
+                              int from, int to, Route *route)
 {
     route_reset(route);
     if (from < 0 || from >= graph->node_count || to < 0 ||
@@ -122,8 +140,10 @@ RouteStatus route_dijkstra(const Graph *graph, Load load, int from, int to,
         return ROUTE_OUT_OF_MEMORY;
     }
 
+    search.destination = to;
+    search.top_speed_mps = top_speed_mps;
     search.best_cost_s[from] = 0;
-    heap_insert(search.queue, from, 0);
+    heap_insert(search.queue, from, remaining_seconds(graph, &search, from));
 
     RouteStatus status = ROUTE_UNREACHABLE;
     int node_id;
@@ -139,6 +159,18 @@ RouteStatus route_dijkstra(const Graph *graph, Load load, int from, int to,
 
     search_free(&search);
     return status;
+}
+
+RouteStatus route_dijkstra(const Graph *graph, Load load, int from, int to,
+                           Route *route)
+{
+    return run_search(graph, load, 0, from, to, route);
+}
+
+RouteStatus route_astar(const Graph *graph, Load load, double top_speed_mps,
+                        int from, int to, Route *route)
+{
+    return run_search(graph, load, top_speed_mps, from, to, route);
 }
 
 void route_free(Route *route)
