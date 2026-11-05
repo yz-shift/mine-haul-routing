@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 20:35 · T-002 · 卡住
+- 做了：我说能看到 Ubuntu，复查后发现 WSL 本体已装好，但这个 Windows 账户下没有发行版，所以没有领任务，也没有写代码
+- 改了：TASKS.md、PROGRESS.md
+- 验证：`wsl --version` 显示 WSL 3.0.3.0，电脑已于 20:34 重启。`wsl --list --all --verbose` 提示没有已安装的分发，`wsl -d Ubuntu` 报 `WSL_E_DISTRO_NOT_FOUND`；注册表（HKCU、HKU）里没有发行版记录，也没有 Ubuntu 应用包。查询账户是 `hoey\hoeyz`，电脑上只查到这一个账户有 WSL 记录
+- 问题：不清楚 Ubuntu 没装上的原因，也和我看到的结果对不上，需要我贴出 `wsl -l -v` 的实际输出
+- 下一步：我运行 `wsl --install -d Ubuntu` 并设置用户，然后贴出 `wsl -l -v` 的输出
+
 ## 2026-11-05 20:27 · T-002 · 卡住
 - 做了：我说 WSL 装好了，复查后发现这台电脑上还用不了 WSL，所以没有领任务，也没有写代码
 - 改了：TASKS.md、PROGRESS.md
