@@ -2,6 +2,20 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 22:10 · T-011 · 卡住
+- 做了：写好 README（简介、技术栈、运行方法、文件格式、代价模型、设计取舍、复杂度、测速结果、测试、已知局限），用英文写，方便放到 GitHub 上给面试官看
+- 改了：README.md、TASKS.md、PROGRESS.md
+- 验证：README 里的表格和数字来自 bench/results.json 和之前的测试输出；图片还不存在，两个图片链接暂时打不开
+- 问题：等 T-009 出图。README 写了"满载在缓下坡能到 56 km/h，所以启发值更弱"的解释，这是从测速结果和 top_speed_kmh 推断的，没有单独做实验验证
+- 下一步：我同意安装 matplotlib 后出图并检查，再把 T-009、T-011 标完成
+
+## 2026-11-05 22:05 · T-010 · 卡住
+- 做了：写好 GitHub Actions 工作流，每次 push 和 PR 时编译、跑 `make test` 和 `make valgrind`
+- 改了：.github/workflows/ci.yml、TASKS.md、PROGRESS.md
+- 验证：在 WSL 里从干净克隆跑工作流的命令：编译、`make test`、`make valgrind` 退出码都是 0，仓库没有 CRLF 文件，YAML 能解析。**未验证：Actions 本身是否变绿**，因为它只有 push 后才会运行
+- 问题：本地是 Ubuntu 26.04，Actions 的 ubuntu-latest 版本可能不同，gcc 和 valgrind 版本也可能不同，所以本地通过不能保证云端一定通过
+- 下一步：我同意 git push 后看 Actions 结果
+
 ## 2026-11-05 22:03 · T-009 · 卡住
 - 做了：写了大图生成器、测速程序、制表脚本和出图脚本；`make bench` 生成 1 万、4 万、9 万节点的网格图，每种规模和载重跑 200 对随机起终点，共 5 轮取中位数，全程核对两种算法的代价一致
 - 改了：bench/gen_road.c、bench/bench_routing.c、bench/results.json、viz/bench_table.py、viz/plot_route.py、viz/requirements.txt、Makefile、.gitignore、TASKS.md、PROGRESS.md
