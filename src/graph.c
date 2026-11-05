@@ -107,6 +107,41 @@ int graph_add_node(Graph *graph, const char *name, double x_m, double y_m,
     return id;
 }
 
+int graph_find_node(const Graph *graph, const char *name)
+{
+    int found = GRAPH_NODE_NOT_FOUND;
+    for (int i = 0; i < graph->node_count; i++) {
+        if (strcmp(graph->nodes[i].name, name) == 0) {
+            if (found != GRAPH_NODE_NOT_FOUND) {
+                return GRAPH_NODE_AMBIGUOUS;
+            }
+            found = i;
+        }
+    }
+    return found;
+}
+
+static int set_arcs_closed(Node *node, int to, bool closed)
+{
+    int count = 0;
+    for (int i = 0; i < node->arc_count; i++) {
+        if (node->arcs[i].to == to) {
+            node->arcs[i].closed = closed;
+            count++;
+        }
+    }
+    return count;
+}
+
+int graph_set_road_closed(Graph *graph, int a, int b, bool closed)
+{
+    if (!is_valid_node(graph, a) || !is_valid_node(graph, b)) {
+        return 0;
+    }
+    return set_arcs_closed(&graph->nodes[a], b, closed) +
+           set_arcs_closed(&graph->nodes[b], a, closed);
+}
+
 bool graph_add_road(Graph *graph, int from, int to, double length_m,
                     double speed_limit_kmh, bool one_way, bool closed)
 {

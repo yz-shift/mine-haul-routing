@@ -304,8 +304,38 @@ TEST(test_route_free_leaves_the_route_safe_to_free_again)
     graph_free(graph);
 }
 
+TEST(test_replanning_after_a_closure_changes_the_route_and_reopening_restores_it)
+{
+    Graph *graph = create_flat_graph(4);
+    ASSERT_TRUE(graph != NULL);
+    graph_add_road(graph, 0, 1, 1000, LIMIT, false, false);
+    graph_add_road(graph, 1, 3, 1000, LIMIT, false, false);
+    graph_add_road(graph, 1, 2, 1000, LIMIT, false, false);
+    graph_add_road(graph, 2, 3, 2000, LIMIT, false, false);
+
+    Route route;
+    ASSERT_EQ_INT(ROUTE_FOUND, route_dijkstra(graph, LOAD_EMPTY, 0, 3, &route));
+    ASSERT_NEAR(200, route.cost_s, TOLERANCE);
+    ASSERT_TRUE(path_is(&route, (const int[]){0, 1, 3}, 3));
+    route_free(&route);
+
+    /* The truck has reached node 1 when the road ahead closes. */
+    ASSERT_EQ_INT(2, graph_set_road_closed(graph, 1, 3, true));
+    ASSERT_EQ_INT(ROUTE_FOUND, route_dijkstra(graph, LOAD_EMPTY, 1, 3, &route));
+    ASSERT_NEAR(300, route.cost_s, TOLERANCE);
+    ASSERT_TRUE(path_is(&route, (const int[]){1, 2, 3}, 3));
+    route_free(&route);
+
+    ASSERT_EQ_INT(2, graph_set_road_closed(graph, 1, 3, false));
+    ASSERT_EQ_INT(ROUTE_FOUND, route_dijkstra(graph, LOAD_EMPTY, 1, 3, &route));
+    ASSERT_NEAR(100, route.cost_s, TOLERANCE);
+    route_free(&route);
+    graph_free(graph);
+}
+
 int main(void)
 {
+    RUN_TEST(test_replanning_after_a_closure_changes_the_route_and_reopening_restores_it);
     RUN_TEST(test_follows_a_chain_of_roads);
     RUN_TEST(test_matches_a_hand_worked_graph);
     RUN_TEST(test_later_discovery_replaces_a_worse_queued_cost);

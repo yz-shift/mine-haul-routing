@@ -140,8 +140,81 @@ TEST(test_arrays_keep_their_contents_when_they_grow)
     graph_free(graph);
 }
 
+TEST(test_find_node_by_name)
+{
+    Graph *graph = create_three_nodes();
+    ASSERT_TRUE(graph != NULL);
+    ASSERT_EQ_INT(0, graph_find_node(graph, "A"));
+    ASSERT_EQ_INT(2, graph_find_node(graph, "C"));
+    ASSERT_EQ_INT(GRAPH_NODE_NOT_FOUND, graph_find_node(graph, "Z"));
+    ASSERT_EQ_INT(GRAPH_NODE_NOT_FOUND, graph_find_node(graph, "a"));
+
+    graph_add_node(graph, "A", 9, 9, 9);
+    ASSERT_EQ_INT(GRAPH_NODE_AMBIGUOUS, graph_find_node(graph, "A"));
+    ASSERT_EQ_INT(1, graph_find_node(graph, "B"));
+    graph_free(graph);
+}
+
+TEST(test_closing_a_two_way_road_closes_both_directions)
+{
+    Graph *graph = create_three_nodes();
+    ASSERT_TRUE(graph != NULL);
+    graph_add_road(graph, 0, 1, 5, 40, false, false);
+    graph_add_road(graph, 1, 2, 5, 40, false, false);
+
+    ASSERT_EQ_INT(2, graph_set_road_closed(graph, 1, 0, true));
+    ASSERT_TRUE(graph->nodes[0].arcs[0].closed);
+    ASSERT_TRUE(graph->nodes[1].arcs[0].closed);
+    /* The other road at node 1 stays open. */
+    ASSERT_TRUE(!graph->nodes[1].arcs[1].closed);
+
+    ASSERT_EQ_INT(2, graph_set_road_closed(graph, 0, 1, false));
+    ASSERT_TRUE(!graph->nodes[0].arcs[0].closed);
+    ASSERT_TRUE(!graph->nodes[1].arcs[0].closed);
+    graph_free(graph);
+}
+
+TEST(test_closing_a_one_way_road_works_from_either_end)
+{
+    Graph *graph = create_three_nodes();
+    ASSERT_TRUE(graph != NULL);
+    graph_add_road(graph, 0, 1, 5, 40, true, false);
+    ASSERT_EQ_INT(1, graph_set_road_closed(graph, 1, 0, true));
+    ASSERT_TRUE(graph->nodes[0].arcs[0].closed);
+    graph_free(graph);
+}
+
+TEST(test_closing_affects_every_parallel_road)
+{
+    Graph *graph = create_three_nodes();
+    ASSERT_TRUE(graph != NULL);
+    graph_add_road(graph, 0, 1, 5, 40, false, false);
+    graph_add_road(graph, 0, 1, 9, 20, false, false);
+    ASSERT_EQ_INT(4, graph_set_road_closed(graph, 0, 1, true));
+    ASSERT_TRUE(graph->nodes[0].arcs[1].closed);
+    ASSERT_TRUE(graph->nodes[1].arcs[1].closed);
+    graph_free(graph);
+}
+
+TEST(test_closing_a_missing_road_reports_nothing_found)
+{
+    Graph *graph = create_three_nodes();
+    ASSERT_TRUE(graph != NULL);
+    graph_add_road(graph, 0, 1, 5, 40, false, false);
+    ASSERT_EQ_INT(0, graph_set_road_closed(graph, 0, 2, true));
+    ASSERT_EQ_INT(0, graph_set_road_closed(graph, -1, 0, true));
+    ASSERT_EQ_INT(0, graph_set_road_closed(graph, 0, 3, true));
+    ASSERT_TRUE(!graph->nodes[0].arcs[0].closed);
+    graph_free(graph);
+}
+
 int main(void)
 {
+    RUN_TEST(test_find_node_by_name);
+    RUN_TEST(test_closing_a_two_way_road_closes_both_directions);
+    RUN_TEST(test_closing_a_one_way_road_works_from_either_end);
+    RUN_TEST(test_closing_affects_every_parallel_road);
+    RUN_TEST(test_closing_a_missing_road_reports_nothing_found);
     RUN_TEST(test_new_graph_is_empty);
     RUN_TEST(test_free_null_is_safe);
     RUN_TEST(test_add_node_stores_fields_and_returns_sequential_ids);

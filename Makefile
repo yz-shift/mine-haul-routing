@@ -10,6 +10,8 @@ BUILD    := build
 LIB_SRCS := $(filter-out src/main.c,$(wildcard src/*.c))
 LIB_OBJS := $(LIB_SRCS:%.c=$(BUILD)/%.o)
 
+APP      := $(BUILD)/mine-route
+
 # Each tests/test_*.c is a standalone program with its own main().
 TEST_SRCS := $(wildcard tests/test_*.c)
 TEST_OBJS := $(TEST_SRCS:%.c=$(BUILD)/%.o)
@@ -17,19 +19,25 @@ TEST_BINS := $(TEST_SRCS:%.c=$(BUILD)/%)
 
 # --errors-for-leak-kinds=all makes any leak, even "still reachable", fail the
 # run through --error-exitcode, so the target can gate a task on 0 leaks.
+# The exit code is 99 so the CLI test can tell it from the tool's own exit code 1.
 VALGRIND := valgrind --leak-check=full --show-leak-kinds=all \
-            --errors-for-leak-kinds=all --track-origins=yes --error-exitcode=1
+            --errors-for-leak-kinds=all --track-origins=yes --error-exitcode=99
 
 .PHONY: all test valgrind clean
 
-all: $(TEST_BINS)
+all: $(APP) $(TEST_BINS)
 
 # set -e stops at the first failing binary and passes its exit code to make.
-test: $(TEST_BINS)
+test: $(APP) $(TEST_BINS)
 	@set -e; for t in $(TEST_BINS); do echo "== $$t"; "./$$t"; done
+	@echo "== tests/cli_test.sh"; sh tests/cli_test.sh $(APP)
 
-valgrind: $(TEST_BINS)
+valgrind: $(APP) $(TEST_BINS)
 	@set -e; for t in $(TEST_BINS); do echo "== $$t"; $(VALGRIND) "./$$t"; done
+	@echo "== tests/cli_test.sh"; RUNNER="$(VALGRIND)" sh tests/cli_test.sh $(APP)
+
+$(APP): $(BUILD)/src/main.o $(LIB_OBJS)
+	$(CC) $^ -o $@ $(LDLIBS)
 
 $(BUILD)/tests/%: $(BUILD)/tests/%.o $(LIB_OBJS)
 	$(CC) $^ -o $@ $(LDLIBS)
@@ -44,4 +52,4 @@ clean:
 # Keep test objects, which make would otherwise delete as intermediate files.
 .SECONDARY: $(TEST_OBJS)
 
--include $(TEST_OBJS:.o=.d) $(LIB_OBJS:.o=.d)
+-include $(TEST_OBJS:.o=.d) $(LIB_OBJS:.o=.d) $(BUILD)/src/main.d

@@ -1,0 +1,73 @@
+# Sample open-pit mine, designed by hand. It is not based on a real site.
+# The pit floor is about 150 m below the plant area.
+
+# N id name x_m y_m elevation_m
+N 0 PIT_FACE_A 600 300 -120
+N 1 PIT_FACE_B 900 250 -120
+N 2 PIT_JUNCTION 750 400 -110
+N 3 RAMP_LOW_W 500 550 -80
+N 4 RAMP_MID_W 350 800 -40
+N 5 RAMP_TOP_W 450 1100 0
+N 6 STEEP_LOW 800 650 -60
+N 7 STEEP_TOP 800 900 0
+N 8 RAMP_LOW_E 1100 550 -80
+N 9 RAMP_MID_E 1300 800 -40
+N 10 RAMP_TOP_E 1200 1100 0
+N 11 RIM_WEST 600 1250 10
+N 12 RIM_CENTRE 800 1200 10
+N 13 RIM_EAST 1050 1250 10
+N 14 CRUSHER 800 1600 30
+N 15 STOCKPILE 500 1700 25
+N 16 WORKSHOP 1100 1650 20
+N 17 FUEL_BAY 1300 1450 15
+N 18 WASTE_ROAD_W 200 1300 20
+N 19 WASTE_DUMP_W 50 1550 60
+N 20 WASTE_ROAD_E 1550 1200 20
+N 21 WASTE_DUMP_E 1750 1400 65
+N 22 GATEHOUSE 800 2000 35
+N 23 WATER_FILL 1000 1900 30
+
+# E from to length_m speed_limit_kmh one_way closed
+
+# Pit floor
+E 0 2 199 20 0 0
+E 1 2 234 20 0 0
+
+# West haul ramp: long and gentle, built for loaded trucks
+E 2 3 380 30 0 0
+E 3 4 380 30 0 0
+E 4 5 412 30 0 0
+E 5 11 234 40 0 0
+
+# East haul ramp: longer again, the fallback when the west ramp is shut
+E 2 8 534 30 0 0
+E 8 9 449 30 0 0
+E 9 10 412 30 0 0
+E 10 13 234 40 0 0
+
+# Service ramp: short and steep, past a full truck's traction limit
+E 2 6 306 20 0 0
+E 6 7 300 20 0 0
+E 7 12 300 30 0 0
+
+# Rim road
+E 11 12 217 40 0 0
+E 12 13 268 40 0 0
+
+# Plant area. Stockpile feeds the crusher one way; trucks leave towards the workshop
+E 12 14 441 40 0 0
+E 11 15 508 40 0 0
+E 15 14 348 25 1 0
+E 14 16 335 25 1 0
+E 13 16 444 40 0 0
+E 13 17 353 40 0 0
+E 17 16 312 25 0 0
+E 14 22 441 40 0 0
+E 22 23 246 25 0 0
+E 23 16 297 25 0 0
+
+# Waste dumps
+E 11 18 444 40 0 0
+E 18 19 336 30 0 0
+E 17 20 389 40 0 0
+E 20 21 326 30 0 0

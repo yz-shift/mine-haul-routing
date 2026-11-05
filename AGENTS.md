@@ -7,14 +7,14 @@
 
 - 目标：矿区运输路径优化：C 语言实现 Dijkstra 和 A*，按距离、坡度、载重计算卡车最优路线，支持临时封路后重新规划；Python 读取 JSON 结果画地图
 - 技术栈：C11 + Makefile + valgrind；Python 3.12 + matplotlib 做可视化（以 T-001 方案确认为准）
-- 入口文件：（T-001 确认后填）
+- 入口文件：`src/main.c`（命令行工具 `build/mine-route`）
 
 ## 2. 常用命令
 
 | 用途 | 命令 |
 |---|---|
 | 安装依赖 | `sudo apt install build-essential valgrind` |
-| 运行 | 暂无，T-008 写完命令行工具后再填 |
+| 运行 | `make && ./build/mine-route --map data/sample_mine.road --from PIT_FACE_A --to CRUSHER` |
 | 测试 | `make test`、`make valgrind` |
 
 所有 `make` 命令都在 WSL Ubuntu 的项目目录 `/mnt/d/projects/mine-haul-routing` 里运行。

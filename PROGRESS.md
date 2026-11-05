@@ -2,6 +2,13 @@
 
 > 进度日志。新的写在最上面；只追加，不删改旧记录。
 
+## 2026-11-05 21:53 · T-008 · 完成
+- 做了：实现封路、按名字找节点、JSON 输出和命令行工具 `mine-route`；手工设计了 24 个节点的示例矿区；AGENTS.md 按之前确认的内容填上入口文件和运行命令
+- 改了：include/graph.h、src/graph.c、include/json_out.h、src/json_out.c、src/main.c、data/sample_mine.road、tests/cli_test.sh、tests/test_json_out.c、tests/test_graph.c、tests/test_routing.c、Makefile、AGENTS.md、TASKS.md、PROGRESS.md
+- 验证：示例矿区上，满载走西侧缓坡（668 s，2263 m），空载走陡坡（270 s，1546 m）；关闭 RAMP_MID_W 到 RAMP_TOP_W 后，从 RAMP_MID_W 重规划改走东侧（769 s，3098 m）。`make test` 退出码 0（C 单元测试 88 个，命令行场景 30 个）；`make valgrind` 退出码 0，包括命令行场景。输出用 Python `json.load` 解析通过。一次性检查：ASan + UBSan（含命令行）通过，`-O2` 无警告，写满磁盘（/dev/full）时退出码 1，故意改坏代码 14 处都能发现
+- 问题：之前"待定"的两件事已决定：节点名重复时按名字查找直接报错；封路会关闭两点之间所有平行路段的两个方向。第一次跑命令行测试有 2 处失败，是我把路长写成 411，实际向上取整是 412，改正后全部重跑
+- 下一步：T-009 Python 可视化 + 测速对比
+
 ## 2026-11-05 21:43 · T-007 · 完成
 - 做了：实现 A*，和 Dijkstra 共用一个搜索循环，启发函数是直线距离除以全图最高速度；启发值关闭时就是 Dijkstra
 - 改了：include/routing.h、src/routing.c、tests/test_astar.c、TASKS.md、PROGRESS.md

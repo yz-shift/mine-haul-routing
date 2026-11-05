@@ -57,4 +57,22 @@ int graph_add_node(Graph *graph, const char *name, double x_m, double y_m,
 bool graph_add_road(Graph *graph, int from, int to, double length_m,
                     double speed_limit_kmh, bool one_way, bool closed);
 
+enum {
+    GRAPH_NODE_NOT_FOUND = -1,
+    GRAPH_NODE_AMBIGUOUS = -2,
+};
+
+/*
+ * Returns the id of the node with this name, or one of the codes above if no
+ * node or several nodes have it. O(V), so it suits user input, not search loops.
+ */
+int graph_find_node(const Graph *graph, const char *name);
+
+/*
+ * Closes or reopens the road between a and b: every arc between them, in both
+ * directions, because a closure blocks the physical road. Returns the number of
+ * arcs found, so 0 means there is no such road.
+ */
+int graph_set_road_closed(Graph *graph, int a, int b, bool closed);
+
 #endif /* GRAPH_H */
